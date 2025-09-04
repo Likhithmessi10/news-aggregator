@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>News Aggregator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #222;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 1px;
+    }
+    .container {
+      padding: 20px;
+      max-width: 1200px;
+      margin: auto;
+    }
+    form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    select, button {
+      padding: 8px 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 14px;
+    }
+    button {
+      background: #007bff;
+      color: white;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px 15px;
+      border-bottom: 1px solid #f0f0f0;
+      text-align: left;
+    }
+    th {
+      background: #007bff;
+      color: white;
+      text-transform: uppercase;
+      font-size: 13px;
+    }
+    tr:hover {
+      background: #f9f9f9;
+    }
+    a {
+      color: #007bff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+      .refresh-btn {
+    display: inline-block;
+    background: linear-gradient(90deg, #ff6a00, #ee0979);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+  }
+  .refresh-btn:hover {
+    background: linear-gradient(90deg, #ee0979, #ff6a00);
+    transform: scale(1.05);
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
+  }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📰 News Aggregator</h1>
+    <header>
+  <a href="/refresh" class="refresh-btn" >🔄 Refresh News</a>
+</header>
+  </header>
+
+  <div class="container">
+    <form method="get" action="/">
+      <label>Source:</label>
+      <select name="source">
+        <option value="">All</option>
+        {% for s in sources %}
+          <option value="{{ s }}" {% if selected_source == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Sentiment:</label>
+      <select name="sentiment">
+        <option value="">All</option>
+        {% for s in sentiments %}
+          <option value="{{ s }}" {% if selected_sentiment == s %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+
+      <label>Category:</label>
+      <select name="category">
+        <option value="">All</option>
+        {% for c in categories %}
+          <option value="{{ c }}" {% if selected_category == c %}selected{% endif %}>{{ c }}</option>
+        {% endfor %}
+      </select>
+
+      <button type="submit">Filter</button>
+    </form>
+
+    <table>
+      <tr>
+        <th>Source</th>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Sentiment</th>
+        <th>Published</th>
+        <th>Link</th>
+      </tr>
+      {% for article in articles %}
+      <tr>
+        <td>{{ article.source }}</td>
+        <td>{{ article.title }}</td>
+        <td>{{ article.category }}</td>
+        <td>{{ article.sentiment }}</td>
+        <td>{{ article.published }}</td>
+        <td><a href="{{ article.link }}" target="_blank">Read</a></td>
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</body>
+</html>

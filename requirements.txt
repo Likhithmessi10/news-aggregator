@@ -1,0 +1,7 @@
+beautifulsoup4==4.12.3
+pandas==2.2.2
+requests==2.32.3
+pymongo==4.8.0
+textblob==0.18.0.post0
+nltk==3.9.1
+feedparser==6.0.11
