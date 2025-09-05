@@ -1,159 +1,409 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>News Aggregator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PulsePress - News Aggregator</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+    
+    :root {
+      --primary-color: #5a5be2;
+      --secondary-color: #c9c9f4;
+      --background-color: #f0f2f5;
+      --card-bg: #ffffff;
+      --text-color: #333;
+      --light-text: #666;
+      --heading-color: #1a1a1a;
+      --positive-sentiment: #4CAF50;
+      --negative-sentiment: #e74c3c;
+      --neutral-sentiment: #f1c40f;
+    }
+
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f4f6f8;
+      font-family: 'Poppins', sans-serif;
+      background: var(--background-color);
+      color: var(--text-color);
       margin: 0;
       padding: 0;
+      line-height: 1.6;
     }
-    header {
-      background: #222;
-      color: #fff;
-      padding: 20px;
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    /* Header Section */
+    .header-section {
+      background: linear-gradient(135deg, #e0cffc, #d5c8fa);
+      padding: 40px;
+      border-radius: 20px;
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+    .header-section::before {
+      content: '';
+      position: absolute;
+      top: -50px;
+      left: -50px;
+      width: 200px;
+      height: 200px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 50%;
+    }
+    .header-section::after {
+      content: '';
+      position: absolute;
+      bottom: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 50%;
+    }
+    .main-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 100%;
+      margin-bottom: 20px;
+    }
+    .logo {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--heading-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+    }
+    .refresh-btn {
+      display: inline-block;
+      background: linear-gradient(90deg, #ff6a00, #ee0979);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 106, 0, 0.3);
+    }
+    .refresh-btn:hover {
+      background: linear-gradient(90deg, #ee0979, #ff6a00);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(238, 9, 121, 0.4);
+    }
+    .hero-content {
       text-align: center;
     }
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      letter-spacing: 1px;
+    .hero-content h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin: 10px 0;
+      background: linear-gradient(45deg, #007bff, #0056b3);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
-    .container {
-      padding: 20px;
-      max-width: 1200px;
-      margin: auto;
+    .hero-content p {
+      font-size: 1rem;
+      color: var(--light-text);
+      max-width: 600px;
+      margin: 0 auto 20px;
     }
-    form {
+    .style-buttons {
       display: flex;
+      gap: 10px;
       justify-content: center;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
     }
-    select, button {
-      padding: 8px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 14px;
+    .style-buttons button {
+      padding: 8px 20px;
+      border: 1px solid var(--secondary-color);
+      border-radius: 20px;
+      background: transparent;
+      color: var(--light-text);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
-    button {
-      background: #007bff;
+    .style-buttons button:hover, .style-buttons button.active {
+      background: var(--primary-color);
       color: white;
+      border-color: var(--primary-color);
+    }
+
+    /* Filter Section */
+    .filter-card {
+      background: var(--card-bg);
+      padding: 20px 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+      margin-bottom: 30px;
+      display: flex;
+      flex-direction: column;
+    }
+    .filter-card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--heading-color);
+    }
+    .filter-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      align-items: center;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+    }
+    .form-group label {
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--light-text);
+      margin-bottom: 5px;
+    }
+    select, .filter-btn {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+      transition: border-color 0.3s;
+    }
+    select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    .filter-btn {
+      background: var(--primary-color);
+      color: white;
+      font-weight: 600;
       cursor: pointer;
       border: none;
-      transition: 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.2);
     }
-    button:hover {
-      background: #0056b3;
+    .filter-btn:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
     }
-    table {
+
+    /* Table Section */
+    .table-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    .table-card h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 20px;
+      color: var(--heading-color);
+    }
+    .news-table {
       width: 100%;
-      border-collapse: collapse;
-      background: white;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      border-collapse: separate;
+      border-spacing: 0 10px;
     }
-    th, td {
-      padding: 12px 15px;
-      border-bottom: 1px solid #f0f0f0;
-      text-align: left;
-    }
-    th {
-      background: #007bff;
+    .news-table thead th {
+      background: var(--primary-color);
       color: white;
+      text-align: left;
+      padding: 15px 20px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
       text-transform: uppercase;
-      font-size: 13px;
     }
-    tr:hover {
-      background: #f9f9f9;
+    .news-table thead th:first-child {
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
     }
-    a {
-      color: #007bff;
+    .news-table thead th:last-child {
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .news-table tbody tr {
+      background: var(--card-bg);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+    }
+    .news-table tbody tr:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+    .news-table td {
+      padding: 15px 20px;
+      border-top: 1px solid #f0f0f0;
+    }
+    .news-table td:first-child {
+      border-left: 1px solid #f0f0f0;
+      border-top-left-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+    .news-table td:last-child {
+      border-right: 1px solid #f0f0f0;
+      border-top-right-radius: 10px;
+      border-bottom-right-radius: 10px;
+    }
+    .news-table tbody tr:first-child td {
+      border-top: none;
+    }
+    .news-table tbody tr:first-child td:first-child {
+      border-top-left-radius: 0;
+    }
+    .news-table tbody tr:first-child td:last-child {
+      border-top-right-radius: 0;
+    }
+
+    .sentiment-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: capitalize;
+    }
+    .positive {
+      background-color: #e8f5e9;
+      color: var(--positive-sentiment);
+    }
+    .negative {
+      background-color: #ffebee;
+      color: var(--negative-sentiment);
+    }
+    .neutral {
+      background-color: #fffde7;
+      color: var(--neutral-sentiment);
+    }
+    .read-link {
+      color: var(--primary-color);
+      font-weight: 600;
       text-decoration: none;
-      font-weight: bold;
+      transition: color 0.3s;
     }
-    a:hover {
+    .read-link:hover {
       text-decoration: underline;
     }
-      .refresh-btn {
-    display: inline-block;
-    background: linear-gradient(90deg, #ff6a00, #ee0979);
-    color: white;
-    padding: 10px 18px;
-    border-radius: 8px;
-    text-decoration: none;
-    font-weight: bold;
-    transition: all 0.3s ease;
-    margin-top: 10px;
-  }
-  .refresh-btn:hover {
-    background: linear-gradient(90deg, #ee0979, #ff6a00);
-    transform: scale(1.05);
-    box-shadow: 0px 4px 12px rgba(0,0,0,0.2);
-  }
+    
+    @media (max-width: 768px) {
+      .main-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 20px;
+      }
+      .filter-form {
+        grid-template-columns: 1fr;
+      }
+      .news-table th, .news-table td {
+        padding: 10px;
+        font-size: 0.85rem;
+      }
+      .news-table thead th:last-child, .news-table tbody td:last-child {
+        display: none; /* Hide link column on small screens to save space */
+      }
+    }
   </style>
 </head>
 <body>
-  <header>
-    <h1>📰 News Aggregator</h1>
-    <header>
-  <a href="/refresh" class="refresh-btn" >🔄 Refresh News</a>
-</header>
-  </header>
 
   <div class="container">
-    <form method="get" action="/">
-      <label>Source:</label>
-      <select name="source">
-        <option value="">All</option>
-        {% for s in sources %}
-          <option value="{{ s }}" {% if selected_source == s %}selected{% endif %}>{{ s }}</option>
-        {% endfor %}
-      </select>
+    <div class="header-section">
+      <div class="main-header">
+        <a href="/refresh" class="refresh-btn">🔄 Refresh News</a>
+      </div>
+      <div class="hero-content">
+        <h1>News Aggregator</h1>
+        <p>A smart news aggregator that curates the latest headlines from multiple sources. Filter by source, category, and sentiment to find the news that matters most to you.</p>
+        <div class="style-buttons">
+          <button>MODERN</button>
+          <button>UNIQUE</button>
+          <button>EASY</button>
+        </div>
+        <br>
+        <p>A Project by Likhith and Vineeth</p>
+      </div>
+    </div>
+    
+    <div class="filter-card">
+      <h2>Filters</h2>
+      <form class="filter-form" method="get" action="/">
+        <div class="form-group">
+          <label for="source">Source</label>
+          <select id="source" name="source">
+            <option value="">All</option>
+            {% for s in sources %}
+              <option value="{{ s }}" {% if selected_source == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="sentiment">Sentiment</label>
+          <select id="sentiment" name="sentiment">
+            <option value="">All</option>
+            {% for s in sentiments %}
+              <option value="{{ s }}" {% if selected_sentiment == s %}selected{% endif %}>{{ s }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="category">Category</label>
+          <select id="category" name="category">
+            <option value="">All</option>
+            {% for c in categories %}
+              <option value="{{ c }}" {% if selected_category == c %}selected{% endif %}>{{ c }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-      <label>Sentiment:</label>
-      <select name="sentiment">
-        <option value="">All</option>
-        {% for s in sentiments %}
-          <option value="{{ s }}" {% if selected_sentiment == s %}selected{% endif %}>{{ s }}</option>
-        {% endfor %}
-      </select>
+        <button type="submit" class="filter-btn">Filter</button>
+      </form>
+    </div>
 
-      <label>Category:</label>
-      <select name="category">
-        <option value="">All</option>
-        {% for c in categories %}
-          <option value="{{ c }}" {% if selected_category == c %}selected{% endif %}>{{ c }}</option>
-        {% endfor %}
-      </select>
-
-      <button type="submit">Filter</button>
-    </form>
-
-    <table>
-      <tr>
-        <th>Source</th>
-        <th>Title</th>
-        <th>Category</th>
-        <th>Sentiment</th>
-        <th>Published</th>
-        <th>Link</th>
-      </tr>
-      {% for article in articles %}
-      <tr>
-        <td>{{ article.source }}</td>
-        <td>{{ article.title }}</td>
-        <td>{{ article.category }}</td>
-        <td>{{ article.sentiment }}</td>
-        <td>{{ article.published }}</td>
-        <td><a href="{{ article.link }}" target="_blank">Read</a></td>
-      </tr>
-      {% endfor %}
-    </table>
+    <div class="table-card">
+      <h2>Latest Articles</h2>
+      <table class="news-table">
+        <thead>
+          <tr>
+            <th>Source</th>
+            <th>Title</th>
+            <th>Category</th>
+            <th>Sentiment</th>
+            <th>Published</th>
+            <th>Link</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for article in articles %}
+          <tr>
+            <td>{{ article.source }}</td>
+            <td>{{ article.title }}</td>
+            <td>{{ article.category }}</td>
+            <td><span class="sentiment-badge {{ article.sentiment|lower }}">{{ article.sentiment }}</span></td>
+            <td>{{ article.published }}</td>
+            <td><a href="{{ article.link }}" target="_blank" class="read-link">Read</a></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
   </div>
+
 </body>
 </html>
