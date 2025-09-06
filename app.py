@@ -39,7 +39,7 @@ MONGO_URI = os.getenv(
     "MONGO_URI",
     "mongodb+srv://mlikhith6_db_user:Likhith2912@cluster0.ltni1qs.mongodb.net/news_db?retryWrites=true&w=majority"
 )
-client = MongoClient(MONGO_URI)
+client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
 db = client["news_db"]
 collection = db["articles"]
 
