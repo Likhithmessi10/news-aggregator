@@ -33,12 +33,17 @@ def detect_sentiment(title):
         return "Neutral"
 
 # ---------------------------
-# MongoDB Setup (Atlas)
+# MongoDB Setup (fork-safe)
 # ---------------------------
-MONGO_URI = os.getenv("MONGO_URI")
-client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
-db = client["news_db"]
-collection = db["articles"]
+def get_collection():
+    """Return MongoDB collection safely (fork-safe for Gunicorn)."""
+    MONGO_URI = os.getenv(
+        "MONGO_URI",
+        "mongodb+srv://mlikhith6_db_user:Likhith2912@cluster0.ltni1qs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    )
+    client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
+    db = client["news_db"]
+    return db["articles"]
 
 # ---------------------------
 # Scrape + Save to DB + CSV
@@ -60,9 +65,8 @@ def scrape_and_store():
         df.to_csv("news_output.csv", index=False)
         print(f"✅ Saved {len(df)} articles to news_output.csv")
 
-    # Clear old entries (optional)
-    collection.delete_many({})
-
+    collection = get_collection()
+    collection.delete_many({})  # clear old
     if articles:
         collection.insert_many(articles)
         print(f"✅ Inserted {len(articles)} articles into MongoDB (news_db.articles)")
@@ -74,6 +78,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
+    collection = get_collection()
     sources = sorted(collection.distinct("source"))
     sentiments = sorted(collection.distinct("sentiment"))
     categories = sorted(collection.distinct("category"))
