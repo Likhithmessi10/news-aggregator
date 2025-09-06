@@ -37,10 +37,7 @@ def detect_sentiment(title):
 # ---------------------------
 def get_collection():
     """Return MongoDB collection safely (fork-safe for Gunicorn)."""
-    MONGO_URI = os.getenv(
-        "MONGO_URI",
-        "mongodb+srv://mlikhith6_db_user:Likhith2912@cluster0.ltni1qs.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
-    )
+    MONGO_URI = os.getenv("MONGO_URI")
     client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
     db = client["news_db"]
     return db["articles"]
