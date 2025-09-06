@@ -5,6 +5,7 @@ from textblob import TextBlob
 from scrapers.bbc_scraper import scrape_bbc
 from scrapers.cnn_scraper import scrape_cnn
 from scrapers.aljazeera_scraper import scrape_aljazeera
+import os
 
 # ---------------------------
 # Helper functions
@@ -32,6 +33,17 @@ def detect_sentiment(title):
         return "Neutral"
 
 # ---------------------------
+# MongoDB Setup (Atlas)
+# ---------------------------
+MONGO_URI = os.getenv(
+    "MONGO_URI",
+    "mongodb+srv://mlikhith6_db_user:Likhith2912@cluster0.ltni1qs.mongodb.net/news_db?retryWrites=true&w=majority"
+)
+client = MongoClient(MONGO_URI)
+db = client["news_db"]
+collection = db["articles"]
+
+# ---------------------------
 # Scrape + Save to DB + CSV
 # ---------------------------
 def scrape_and_store():
@@ -51,11 +63,6 @@ def scrape_and_store():
         df.to_csv("news_output.csv", index=False)
         print(f"✅ Saved {len(df)} articles to news_output.csv")
 
-    # MongoDB store
-    client = MongoClient("mongodb://localhost:27017/")
-    db = client["news_db"]
-    collection = db["articles"]
-
     # Clear old entries (optional)
     collection.delete_many({})
 
@@ -67,9 +74,6 @@ def scrape_and_store():
 # Flask App
 # ---------------------------
 app = Flask(__name__)
-client = MongoClient("mongodb://localhost:27017/")
-db = client["news_db"]
-collection = db["articles"]
 
 @app.route("/")
 def index():
